@@ -18,6 +18,7 @@ package dragonBones.utils
 		private static const _helpTransformMatrix:Matrix = new Matrix();
 		private static const _helpParentTransformMatrix:Matrix = new Matrix();
 		
+		[Inline]
 		public static function transformToMatrix(transform:DBTransform, matrix:Matrix):void
 		{
 			matrix.a = transform.scaleX * Math.cos(transform.skewY)
