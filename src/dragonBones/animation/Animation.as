@@ -32,7 +32,7 @@
 		private var _animationDataList:Vector.<AnimationData>;
 		private var _animationList:Vector.<String>;
 		private var _isPlaying:Boolean;
-		private var _timeScale:Number;
+		public var _timeScale:Number;
 		
 		/** @private */
 		dragonBones_internal var _lastAnimationState:AnimationState;
@@ -41,7 +41,7 @@
 		dragonBones_internal var _isFading:Boolean
 		
 		/** @private */
-		dragonBones_internal var _animationStateCount:int;
+		public var _animationStateCount:int;
 		
 		
 		/**

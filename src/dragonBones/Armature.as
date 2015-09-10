@@ -235,6 +235,13 @@
 		 * Update the animation using this method typically in an ENTERFRAME Event or with a Timer.
 		 * @param The amount of second to move the playhead ahead.
 		 */
+		
+		private var isFading:Boolean;
+		private var i:int;
+		private var _at_bone:Bone
+		private var childArmature:Armature
+		private var _at_slot:Slot 
+		
 		public function advanceTime(passedTime:Number):void
 		{
 			_lockDispose = true;
@@ -243,22 +250,22 @@
 			
 			passedTime *= _animation.timeScale;    //_animation's time scale will impact childArmature
 			
-			var isFading:Boolean = _animation._isFading;
-			var i:int = _boneList.length;
+			isFading = _animation._isFading;
+			i = _boneList.length;
 			while(i --)
 			{
-				var bone:Bone = _boneList[i];
-				bone.update(isFading);
+				_at_bone = _boneList[i];
+				_at_bone.update(isFading);
 			}
 			
 			i = _slotList.length;
 			while(i --)
 			{
-				var slot:Slot = _slotList[i];
-				slot.update();
-				if(slot._isShowDisplay)
+				_at_slot = _slotList[i];
+				_at_slot.update();
+				if(_at_slot._isShowDisplay)
 				{
-					var childArmature:Armature = slot.childArmature;
+					childArmature = _at_slot.childArmature;
 					if(childArmature)
 					{
 						childArmature.advanceTime(passedTime);

@@ -97,6 +97,7 @@
 		 * Update all registered IAnimatable instance animations using this method typically in an ENTERFRAME Event or with a Timer.
 		 * @param The amount of second to move the playhead ahead.
 		 */
+		private var animatable:IAnimatable
 		public function advanceTime(passedTime:Number):void
 		{
 			if(passedTime < 0)
@@ -116,7 +117,7 @@
 			
 			for(var i:int = 0;i < length; i++)
 			{
-				var animatable:IAnimatable = _animatableList[i];
+				animatable = _animatableList[i];
 				if(animatable)
 				{
 					if(currentIndex != i)

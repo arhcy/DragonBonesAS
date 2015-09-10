@@ -560,16 +560,17 @@
 				}
 			}
 		} 
-		
+		private var parentMatrix:Matrix 
+		private var output:Object 
 		override protected function updateGlobal():Object 
 		{
 			calculateRelativeParentTransform();
 			TransformUtil.transformToMatrix(_global, _globalTransformMatrix);
-			var output:Object = calculateParentTransform();
+			output = calculateParentTransform();
 			if(output != null)
 			{
 				//计算父骨头绝对坐标
-				var parentMatrix:Matrix = output.parentGlobalTransformMatrix;
+				parentMatrix = output.parentGlobalTransformMatrix;
 				_globalTransformMatrix.concat(parentMatrix);
 			}
 			TransformUtil.matrixToTransform(_globalTransformMatrix,_global,true,true);

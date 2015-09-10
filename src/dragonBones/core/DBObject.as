@@ -154,13 +154,14 @@ package dragonBones.core
 		protected function calculateRelativeParentTransform():void
 		{
 		}
-		
+		private var parentGlobalTransform:DBTransform 
+		private var parentGlobalTransformMatrix:Matrix
 		protected function calculateParentTransform():Object
 		{
 			if(this.parent && (this.inheritTranslation || this.inheritRotation || this.inheritScale))
 			{
-				var parentGlobalTransform:DBTransform = this._parent._globalTransformForChild;
-				var parentGlobalTransformMatrix:Matrix = this._parent._globalTransformMatrixForChild;
+				parentGlobalTransform = this._parent._globalTransformForChild;
+				parentGlobalTransformMatrix = this._parent._globalTransformMatrixForChild;
 				
 				if(!this.inheritTranslation || !this.inheritRotation || !this.inheritScale)
 				{
@@ -191,18 +192,23 @@ package dragonBones.core
 			return null;
 		}
 		
+		private var output:Object;
+		private var parentMatrix:Matrix 
+		private var x:Number ;
+		private var y:Number;
+		//private var parentGlobalTransform:DBTransform
 		protected function updateGlobal():Object
 		{
 			calculateRelativeParentTransform();
-			var output:Object = calculateParentTransform();
+			output = calculateParentTransform();
 			if(output != null)
 			{
 				//计算父骨头绝对坐标
-				var parentMatrix:Matrix = output.parentGlobalTransformMatrix;
-				var parentGlobalTransform:DBTransform = output.parentGlobalTransform;
+				parentMatrix = output.parentGlobalTransformMatrix;
+				parentGlobalTransform = output.parentGlobalTransform;
 				//计算绝对坐标
-				var x:Number = _global.x;
-				var y:Number = _global.y;
+				x = _global.x;
+				y = _global.y;
 				
 				_global.x = parentMatrix.a * x + parentMatrix.c * y + parentMatrix.tx;
 				_global.y = parentMatrix.d * y + parentMatrix.b * x + parentMatrix.ty;

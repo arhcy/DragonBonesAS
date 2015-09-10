@@ -75,7 +75,7 @@
 		dragonBones_internal var _globalTransformMatrixForChild:Matrix;
 		
 		private var _tempGlobalTransformForChild:DBTransform;
-		private var _tempGlobalTransformMatrixForChild:Matrix;
+		private var _tempGlobalTransformMatrixForChild:Matrix = new Matrix();
 		
 		public function Bone()
 		{
@@ -345,6 +345,13 @@
 		}
 		
 		/** @private */
+		private	var result:Object;
+		private	var parentGlobalTransform:DBTransform;
+		private	var parentGlobalTransformMatrix:Matrix;
+		private	var ifExistOffsetTranslation:Boolean;
+		private	var ifExistOffsetScale:Boolean;
+		private	var ifExistOffsetRotation:Boolean;
+		
 		dragonBones_internal function update(needUpdate:Boolean = false):void
 		{
 			_needUpdate --;
@@ -360,14 +367,14 @@
 			blendingTimeline();
 			
 		//计算global
-			var result:Object = updateGlobal();
-			var parentGlobalTransform:DBTransform = result ? result.parentGlobalTransform : null;
-			var parentGlobalTransformMatrix:Matrix = result ? result.parentGlobalTransformMatrix : null;
+			result = updateGlobal();
+			parentGlobalTransform = result ? result.parentGlobalTransform : null;
+			parentGlobalTransformMatrix = result ? result.parentGlobalTransformMatrix : null;
 			
 		//计算globalForChild
-			var ifExistOffsetTranslation:Boolean = _offset.x != 0 || _offset.y != 0;
-			var ifExistOffsetScale:Boolean = _offset.scaleX != 1 || _offset.scaleY != 1;
-			var ifExistOffsetRotation:Boolean = _offset.skewX != 0 || _offset.skewY != 0;
+			ifExistOffsetTranslation = _offset.x != 0 || _offset.y != 0;
+			ifExistOffsetScale = _offset.scaleX != 1 || _offset.scaleY != 1;
+			ifExistOffsetRotation = _offset.skewX != 0 || _offset.skewY != 0;
 			
 			if(	(!ifExistOffsetTranslation || applyOffsetTranslationToChild) &&
 				(!ifExistOffsetScale || applyOffsetScaleToChild) &&
@@ -386,7 +393,8 @@
 				
 				if(!_tempGlobalTransformMatrixForChild)
 				{
-					_tempGlobalTransformMatrixForChild = new Matrix();
+					//_tempGlobalTransformMatrixForChild = new Matrix();
+					_tempGlobalTransformMatrixForChild.identity();
 				}
 				_globalTransformMatrixForChild = _tempGlobalTransformMatrixForChild;
 				
@@ -501,15 +509,30 @@
 			_timelineStateList.length = 0;
 		}
 		
+		private	var timelineState:TimelineState;
+		private	var transform:DBTransform;
+		private	var pivot:Point;
+		private	var weight:Number;
+		private var _bt_i:int
+		private var x:Number = 0;
+		private var y:Number = 0;
+		private var skewX:Number = 0;
+		private var skewY:Number = 0;
+		private var scaleX:Number = 1;
+		private var scaleY:Number = 1;
+		private var pivotX:Number = 0;
+		private var pivotY:Number = 0;
+				
+		private var weigthLeft:Number = 1;
+		private var layerTotalWeight:Number = 0;
+		private var prevLayer:int ;
+		private var currentLayer:int;
+		
 		private function blendingTimeline():void
 		{
-			var timelineState:TimelineState;
-			var transform:DBTransform;
-			var pivot:Point;
-			var weight:Number;
 			
-			var i:int = _timelineStateList.length;
-			if(i == 1)
+			_bt_i = _timelineStateList.length;
+			if(_bt_i == 1)
 			{
 				timelineState = _timelineStateList[0];
 				weight = timelineState._animationState.weight * timelineState._animationState.fadeWeight;
@@ -527,28 +550,27 @@
 				_tweenPivot.x = pivot.x * weight;
 				_tweenPivot.y = pivot.y * weight;
 			}
-			else if(i > 1)
+			else if(_bt_i > 1)
 			{
-				var x:Number = 0;
-				var y:Number = 0;
-				var skewX:Number = 0;
-				var skewY:Number = 0;
-				var scaleX:Number = 1;
-				var scaleY:Number = 1;
-				var pivotX:Number = 0;
-				var pivotY:Number = 0;
+				x = 0;
+				y = 0;
+				skewX = 0;
+				skewY = 0;
+				scaleX = 1;
+				scaleY = 1;
+				pivotX = 0;
+				pivotY = 0;
 				
-				var weigthLeft:Number = 1;
-				var layerTotalWeight:Number = 0;
-				var prevLayer:int = _timelineStateList[i - 1]._animationState.layer;
-				var currentLayer:int;
+				weigthLeft = 1;
+				layerTotalWeight = 0;
+				prevLayer = _timelineStateList[_bt_i - 1]._animationState.layer;
 				
 				//Traversal the layer from up to down
 				//layer由高到低依次遍历
 				
-				while(i --)
+				while(_bt_i --)
 				{
-					timelineState = _timelineStateList[i];
+					timelineState = _timelineStateList[_bt_i];
 					
 					currentLayer = timelineState._animationState.layer;
 					if(prevLayer != currentLayer)
